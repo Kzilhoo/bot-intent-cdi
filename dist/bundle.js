@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 26);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -293,10 +293,11 @@ function safeToString(obj) {
 }
 
 function isError(obj) {
-    return obj !== null &&
+    return obj instanceof Error ||
+        (obj !== null &&
            typeof obj === "object" &&
            typeof obj.message === "string" &&
-           typeof obj.name === "string";
+           typeof obj.name === "string");
 }
 
 function markAsOriginatingFromRejection(e) {
@@ -620,12 +621,12 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /*<replacement>*/
-var util = __webpack_require__(8);
-util.inherits = __webpack_require__(9);
+var util = __webpack_require__(9);
+util.inherits = __webpack_require__(10);
 /*</replacement>*/
 
-var Readable = __webpack_require__(39);
-var Writable = __webpack_require__(41);
+var Readable = __webpack_require__(40);
+var Writable = __webpack_require__(42);
 
 util.inherits(Duplex, Readable);
 
@@ -689,7 +690,7 @@ function forEach (xs, f) {
 var defs = __webpack_require__(6);
 var format = __webpack_require__(1).format;
 var inherits = __webpack_require__(1).inherits;
-var HEARTBEAT = __webpack_require__(17).HEARTBEAT;
+var HEARTBEAT = __webpack_require__(18).HEARTBEAT;
 
 module.exports.closeMessage = function(close) {
   var code = close.fields.replyCode;
@@ -860,12 +861,12 @@ function encodeConnectionStart(channel, fields) {
   scratchOffset += len;
   varyingSize += serverProperties_encoded.length;
   val = fields.mechanisms;
-  if (void 0 === val) val = new Buffer("PLAIN"); else if (!Buffer.isBuffer(val)) throw new TypeError("Field 'mechanisms' is the wrong type; must be a Buffer");
+  if (void 0 === val) val = Buffer.from("PLAIN"); else if (!Buffer.isBuffer(val)) throw new TypeError("Field 'mechanisms' is the wrong type; must be a Buffer");
   varyingSize += val.length;
   val = fields.locales;
-  if (void 0 === val) val = new Buffer("en_US"); else if (!Buffer.isBuffer(val)) throw new TypeError("Field 'locales' is the wrong type; must be a Buffer");
+  if (void 0 === val) val = Buffer.from("en_US"); else if (!Buffer.isBuffer(val)) throw new TypeError("Field 'locales' is the wrong type; must be a Buffer");
   varyingSize += val.length;
-  var buffer = new Buffer(22 + varyingSize);
+  var buffer = Buffer.alloc(22 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655370, 7);
@@ -880,14 +881,14 @@ function encodeConnectionStart(channel, fields) {
   offset++;
   offset += serverProperties_encoded.copy(buffer, offset);
   val = fields.mechanisms;
-  void 0 === val && (val = new Buffer("PLAIN"));
+  void 0 === val && (val = Buffer.from("PLAIN"));
   len = val.length;
   buffer.writeUInt32BE(len, offset);
   offset += 4;
   val.copy(buffer, offset);
   offset += len;
   val = fields.locales;
-  void 0 === val && (val = new Buffer("en_US"));
+  void 0 === val && (val = Buffer.from("en_US"));
   len = val.length;
   buffer.writeUInt32BE(len, offset);
   offset += 4;
@@ -949,7 +950,7 @@ function encodeConnectionStartOk(channel, fields) {
   if (void 0 === val) val = "en_US"; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'locale' is the wrong type; must be a string (up to 255 chars)");
   var locale_len = Buffer.byteLength(val, "utf8");
   varyingSize += locale_len;
-  var buffer = new Buffer(18 + varyingSize);
+  var buffer = Buffer.alloc(18 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655371, 7);
@@ -962,7 +963,7 @@ function encodeConnectionStartOk(channel, fields) {
   buffer.write(val, offset, "utf8");
   offset += mechanism_len;
   val = fields.response;
-  void 0 === val && (val = new Buffer(void 0));
+  void 0 === val && (val = Buffer.from(void 0));
   len = val.length;
   buffer.writeUInt32BE(len, offset);
   offset += 4;
@@ -997,13 +998,13 @@ function encodeConnectionSecure(channel, fields) {
   if (void 0 === val) throw new Error("Missing value for mandatory field 'challenge'");
   if (!Buffer.isBuffer(val)) throw new TypeError("Field 'challenge' is the wrong type; must be a Buffer");
   varyingSize += val.length;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655380, 7);
   offset = 11;
   val = fields.challenge;
-  void 0 === val && (val = new Buffer(void 0));
+  void 0 === val && (val = Buffer.from(void 0));
   len = val.length;
   buffer.writeUInt32BE(len, offset);
   offset += 4;
@@ -1032,13 +1033,13 @@ function encodeConnectionSecureOk(channel, fields) {
   if (void 0 === val) throw new Error("Missing value for mandatory field 'response'");
   if (!Buffer.isBuffer(val)) throw new TypeError("Field 'response' is the wrong type; must be a Buffer");
   varyingSize += val.length;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655381, 7);
   offset = 11;
   val = fields.response;
-  void 0 === val && (val = new Buffer(void 0));
+  void 0 === val && (val = Buffer.from(void 0));
   len = val.length;
   buffer.writeUInt32BE(len, offset);
   offset += 4;
@@ -1068,7 +1069,7 @@ function decodeConnectionTune(buffer) {
 }
 
 function encodeConnectionTune(channel, fields) {
-  var offset = 0, val = null, varyingSize = 0, buffer = new Buffer(20 + varyingSize);
+  var offset = 0, val = null, varyingSize = 0, buffer = Buffer.alloc(20 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655390, 7);
@@ -1109,7 +1110,7 @@ function decodeConnectionTuneOk(buffer) {
 }
 
 function encodeConnectionTuneOk(channel, fields) {
-  var offset = 0, val = null, varyingSize = 0, buffer = new Buffer(20 + varyingSize);
+  var offset = 0, val = null, varyingSize = 0, buffer = Buffer.alloc(20 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655391, 7);
@@ -1162,7 +1163,7 @@ function encodeConnectionOpen(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'capabilities' is the wrong type; must be a string (up to 255 chars)");
   var capabilities_len = Buffer.byteLength(val, "utf8");
   varyingSize += capabilities_len;
-  var buffer = new Buffer(15 + varyingSize);
+  var buffer = Buffer.alloc(15 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655400, 7);
@@ -1207,7 +1208,7 @@ function encodeConnectionOpenOk(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'knownHosts' is the wrong type; must be a string (up to 255 chars)");
   var knownHosts_len = Buffer.byteLength(val, "utf8");
   varyingSize += knownHosts_len;
-  var buffer = new Buffer(13 + varyingSize);
+  var buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655401, 7);
@@ -1253,7 +1254,7 @@ function encodeConnectionClose(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'replyText' is the wrong type; must be a string (up to 255 chars)");
   var replyText_len = Buffer.byteLength(val, "utf8");
   varyingSize += replyText_len;
-  var buffer = new Buffer(19 + varyingSize);
+  var buffer = Buffer.alloc(19 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655410, 7);
@@ -1290,7 +1291,7 @@ function decodeConnectionCloseOk(buffer) {
 }
 
 function encodeConnectionCloseOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655411, 7);
@@ -1318,7 +1319,7 @@ function encodeConnectionBlocked(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'reason' is the wrong type; must be a string (up to 255 chars)");
   var reason_len = Buffer.byteLength(val, "utf8");
   varyingSize += reason_len;
-  var buffer = new Buffer(13 + varyingSize);
+  var buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655420, 7);
@@ -1340,7 +1341,7 @@ function decodeConnectionUnblocked(buffer) {
 }
 
 function encodeConnectionUnblocked(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(655421, 7);
@@ -1368,7 +1369,7 @@ function encodeChannelOpen(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'outOfBand' is the wrong type; must be a string (up to 255 chars)");
   var outOfBand_len = Buffer.byteLength(val, "utf8");
   varyingSize += outOfBand_len;
-  var buffer = new Buffer(13 + varyingSize);
+  var buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1310730, 7);
@@ -1399,15 +1400,15 @@ function decodeChannelOpenOk(buffer) {
 function encodeChannelOpenOk(channel, fields) {
   var len, offset = 0, val = null, varyingSize = 0;
   val = fields.channelId;
-  if (void 0 === val) val = new Buffer(""); else if (!Buffer.isBuffer(val)) throw new TypeError("Field 'channelId' is the wrong type; must be a Buffer");
+  if (void 0 === val) val = Buffer.from(""); else if (!Buffer.isBuffer(val)) throw new TypeError("Field 'channelId' is the wrong type; must be a Buffer");
   varyingSize += val.length;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1310731, 7);
   offset = 11;
   val = fields.channelId;
-  void 0 === val && (val = new Buffer(""));
+  void 0 === val && (val = Buffer.from(""));
   len = val.length;
   buffer.writeUInt32BE(len, offset);
   offset += 4;
@@ -1428,7 +1429,7 @@ function decodeChannelFlow(buffer) {
 }
 
 function encodeChannelFlow(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(13 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1310740, 7);
@@ -1453,7 +1454,7 @@ function decodeChannelFlowOk(buffer) {
 }
 
 function encodeChannelFlowOk(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(13 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1310741, 7);
@@ -1498,7 +1499,7 @@ function encodeChannelClose(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'replyText' is the wrong type; must be a string (up to 255 chars)");
   var replyText_len = Buffer.byteLength(val, "utf8");
   varyingSize += replyText_len;
-  var buffer = new Buffer(19 + varyingSize);
+  var buffer = Buffer.alloc(19 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1310760, 7);
@@ -1535,7 +1536,7 @@ function decodeChannelCloseOk(buffer) {
 }
 
 function encodeChannelCloseOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1310761, 7);
@@ -1578,7 +1579,7 @@ function encodeAccessRequest(channel, fields) {
   if (void 0 === val) val = "/data"; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'realm' is the wrong type; must be a string (up to 255 chars)");
   var realm_len = Buffer.byteLength(val, "utf8");
   varyingSize += realm_len;
-  var buffer = new Buffer(14 + varyingSize);
+  var buffer = Buffer.alloc(14 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1966090, 7);
@@ -1622,7 +1623,7 @@ function decodeAccessRequestOk(buffer) {
 }
 
 function encodeAccessRequestOk(channel, fields) {
-  var offset = 0, val = null, varyingSize = 0, buffer = new Buffer(14 + varyingSize);
+  var offset = 0, val = null, varyingSize = 0, buffer = Buffer.alloc(14 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(1966091, 7);
@@ -1697,7 +1698,7 @@ function encodeExchangeDeclare(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(17 + varyingSize);
+  var buffer = Buffer.alloc(17 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621450, 7);
@@ -1748,7 +1749,7 @@ function decodeExchangeDeclareOk(buffer) {
 }
 
 function encodeExchangeDeclareOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621451, 7);
@@ -1787,7 +1788,7 @@ function encodeExchangeDelete(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'exchange' is the wrong type; must be a string (up to 255 chars)");
   var exchange_len = Buffer.byteLength(val, "utf8");
   varyingSize += exchange_len;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621460, 7);
@@ -1821,7 +1822,7 @@ function decodeExchangeDeleteOk(buffer) {
 }
 
 function encodeExchangeDeleteOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621461, 7);
@@ -1891,7 +1892,7 @@ function encodeExchangeBind(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(18 + varyingSize);
+  var buffer = Buffer.alloc(18 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621470, 7);
@@ -1936,7 +1937,7 @@ function decodeExchangeBindOk(buffer) {
 }
 
 function encodeExchangeBindOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621471, 7);
@@ -2006,7 +2007,7 @@ function encodeExchangeUnbind(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(18 + varyingSize);
+  var buffer = Buffer.alloc(18 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621480, 7);
@@ -2051,7 +2052,7 @@ function decodeExchangeUnbindOk(buffer) {
 }
 
 function encodeExchangeUnbindOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(2621491, 7);
@@ -2111,7 +2112,7 @@ function encodeQueueDeclare(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276810, 7);
@@ -2177,7 +2178,7 @@ function encodeQueueDeclareOk(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'queue' is the wrong type; must be a string (up to 255 chars)");
   var queue_len = Buffer.byteLength(val, "utf8");
   varyingSize += queue_len;
-  var buffer = new Buffer(21 + varyingSize);
+  var buffer = Buffer.alloc(21 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276811, 7);
@@ -2262,7 +2263,7 @@ function encodeQueueBind(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(18 + varyingSize);
+  var buffer = Buffer.alloc(18 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276820, 7);
@@ -2307,7 +2308,7 @@ function decodeQueueBindOk(buffer) {
 }
 
 function encodeQueueBindOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276821, 7);
@@ -2342,7 +2343,7 @@ function encodeQueuePurge(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'queue' is the wrong type; must be a string (up to 255 chars)");
   var queue_len = Buffer.byteLength(val, "utf8");
   varyingSize += queue_len;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276830, 7);
@@ -2378,7 +2379,7 @@ function decodeQueuePurgeOk(buffer) {
 }
 
 function encodeQueuePurgeOk(channel, fields) {
-  var offset = 0, val = null, varyingSize = 0, buffer = new Buffer(16 + varyingSize);
+  var offset = 0, val = null, varyingSize = 0, buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276831, 7);
@@ -2424,7 +2425,7 @@ function encodeQueueDelete(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'queue' is the wrong type; must be a string (up to 255 chars)");
   var queue_len = Buffer.byteLength(val, "utf8");
   varyingSize += queue_len;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276840, 7);
@@ -2466,7 +2467,7 @@ function decodeQueueDeleteOk(buffer) {
 }
 
 function encodeQueueDeleteOk(channel, fields) {
-  var offset = 0, val = null, varyingSize = 0, buffer = new Buffer(16 + varyingSize);
+  var offset = 0, val = null, varyingSize = 0, buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276841, 7);
@@ -2536,7 +2537,7 @@ function encodeQueueUnbind(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(17 + varyingSize);
+  var buffer = Buffer.alloc(17 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276850, 7);
@@ -2575,7 +2576,7 @@ function decodeQueueUnbindOk(buffer) {
 }
 
 function encodeQueueUnbindOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3276851, 7);
@@ -2603,7 +2604,7 @@ function decodeBasicQos(buffer) {
 }
 
 function encodeBasicQos(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(19 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(19 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932170, 7);
@@ -2632,7 +2633,7 @@ function decodeBasicQosOk(buffer) {
 }
 
 function encodeBasicQosOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932171, 7);
@@ -2699,7 +2700,7 @@ function encodeBasicConsume(channel, fields) {
   var arguments_encoded = SCRATCH.slice(scratchOffset, scratchOffset + len);
   scratchOffset += len;
   varyingSize += arguments_encoded.length;
-  var buffer = new Buffer(17 + varyingSize);
+  var buffer = Buffer.alloc(17 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932180, 7);
@@ -2760,7 +2761,7 @@ function encodeBasicConsumeOk(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'consumerTag' is the wrong type; must be a string (up to 255 chars)");
   var consumerTag_len = Buffer.byteLength(val, "utf8");
   varyingSize += consumerTag_len;
-  var buffer = new Buffer(13 + varyingSize);
+  var buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932181, 7);
@@ -2798,7 +2799,7 @@ function encodeBasicCancel(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'consumerTag' is the wrong type; must be a string (up to 255 chars)");
   var consumerTag_len = Buffer.byteLength(val, "utf8");
   varyingSize += consumerTag_len;
-  var buffer = new Buffer(14 + varyingSize);
+  var buffer = Buffer.alloc(14 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932190, 7);
@@ -2838,7 +2839,7 @@ function encodeBasicCancelOk(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'consumerTag' is the wrong type; must be a string (up to 255 chars)");
   var consumerTag_len = Buffer.byteLength(val, "utf8");
   varyingSize += consumerTag_len;
-  var buffer = new Buffer(13 + varyingSize);
+  var buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932191, 7);
@@ -2892,7 +2893,7 @@ function encodeBasicPublish(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'routingKey' is the wrong type; must be a string (up to 255 chars)");
   var routingKey_len = Buffer.byteLength(val, "utf8");
   varyingSize += routingKey_len;
-  var buffer = new Buffer(17 + varyingSize);
+  var buffer = Buffer.alloc(17 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932200, 7);
@@ -2970,7 +2971,7 @@ function encodeBasicReturn(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'routingKey' is the wrong type; must be a string (up to 255 chars)");
   var routingKey_len = Buffer.byteLength(val, "utf8");
   varyingSize += routingKey_len;
-  var buffer = new Buffer(17 + varyingSize);
+  var buffer = Buffer.alloc(17 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932210, 7);
@@ -3052,7 +3053,7 @@ function encodeBasicDeliver(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'routingKey' is the wrong type; must be a string (up to 255 chars)");
   var routingKey_len = Buffer.byteLength(val, "utf8");
   varyingSize += routingKey_len;
-  var buffer = new Buffer(24 + varyingSize);
+  var buffer = Buffer.alloc(24 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932220, 7);
@@ -3116,7 +3117,7 @@ function encodeBasicGet(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'queue' is the wrong type; must be a string (up to 255 chars)");
   var queue_len = Buffer.byteLength(val, "utf8");
   varyingSize += queue_len;
-  var buffer = new Buffer(16 + varyingSize);
+  var buffer = Buffer.alloc(16 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932230, 7);
@@ -3183,7 +3184,7 @@ function encodeBasicGetOk(channel, fields) {
   if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'routingKey' is the wrong type; must be a string (up to 255 chars)");
   var routingKey_len = Buffer.byteLength(val, "utf8");
   varyingSize += routingKey_len;
-  var buffer = new Buffer(27 + varyingSize);
+  var buffer = Buffer.alloc(27 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932231, 7);
@@ -3239,7 +3240,7 @@ function encodeBasicGetEmpty(channel, fields) {
   if (void 0 === val) val = ""; else if (!("string" == typeof val && Buffer.byteLength(val) < 256)) throw new TypeError("Field 'clusterId' is the wrong type; must be a string (up to 255 chars)");
   var clusterId_len = Buffer.byteLength(val, "utf8");
   varyingSize += clusterId_len;
-  var buffer = new Buffer(13 + varyingSize);
+  var buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932232, 7);
@@ -3269,7 +3270,7 @@ function decodeBasicAck(buffer) {
 }
 
 function encodeBasicAck(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(21 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(21 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932240, 7);
@@ -3302,7 +3303,7 @@ function decodeBasicReject(buffer) {
 }
 
 function encodeBasicReject(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(21 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(21 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932250, 7);
@@ -3332,7 +3333,7 @@ function decodeBasicRecoverAsync(buffer) {
 }
 
 function encodeBasicRecoverAsync(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(13 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932260, 7);
@@ -3357,7 +3358,7 @@ function decodeBasicRecover(buffer) {
 }
 
 function encodeBasicRecover(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(13 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932270, 7);
@@ -3378,7 +3379,7 @@ function decodeBasicRecoverOk(buffer) {
 }
 
 function encodeBasicRecoverOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932271, 7);
@@ -3405,7 +3406,7 @@ function decodeBasicNack(buffer) {
 }
 
 function encodeBasicNack(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(21 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(21 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932280, 7);
@@ -3433,7 +3434,7 @@ function decodeTxSelect(buffer) {
 }
 
 function encodeTxSelect(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5898250, 7);
@@ -3449,7 +3450,7 @@ function decodeTxSelectOk(buffer) {
 }
 
 function encodeTxSelectOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5898251, 7);
@@ -3465,7 +3466,7 @@ function decodeTxCommit(buffer) {
 }
 
 function encodeTxCommit(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5898260, 7);
@@ -3481,7 +3482,7 @@ function decodeTxCommitOk(buffer) {
 }
 
 function encodeTxCommitOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5898261, 7);
@@ -3497,7 +3498,7 @@ function decodeTxRollback(buffer) {
 }
 
 function encodeTxRollback(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5898270, 7);
@@ -3513,7 +3514,7 @@ function decodeTxRollbackOk(buffer) {
 }
 
 function encodeTxRollbackOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5898271, 7);
@@ -3533,7 +3534,7 @@ function decodeConfirmSelect(buffer) {
 }
 
 function encodeConfirmSelect(channel, fields) {
-  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = new Buffer(13 + varyingSize);
+  var offset = 0, val = null, bits = 0, varyingSize = 0, buffer = Buffer.alloc(13 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5570570, 7);
@@ -3554,7 +3555,7 @@ function decodeConfirmSelectOk(buffer) {
 }
 
 function encodeConfirmSelectOk(channel, fields) {
-  var offset = 0, varyingSize = 0, buffer = new Buffer(12 + varyingSize);
+  var offset = 0, varyingSize = 0, buffer = Buffer.alloc(12 + varyingSize);
   buffer[0] = 1;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(5570571, 7);
@@ -3659,7 +3660,7 @@ function encodeBasicProperties(channel, size, fields) {
     varyingSize += 1;
     varyingSize += clusterId_len;
   }
-  var buffer = new Buffer(22 + varyingSize);
+  var buffer = Buffer.alloc(22 + varyingSize);
   buffer[0] = 2;
   buffer.writeUInt16BE(channel, 1);
   buffer.writeUInt32BE(3932160, 7);
@@ -3890,7 +3891,7 @@ function decodeBasicProperties(buffer) {
   return fields;
 }
 
-var codec = __webpack_require__(32), ints = __webpack_require__(7), encodeTable = codec.encodeTable, decodeFields = codec.decodeFields, SCRATCH = new Buffer(4096), EMPTY_OBJECT = Object.freeze({});
+var Buffer = __webpack_require__(7).Buffer, codec = __webpack_require__(33), ints = __webpack_require__(8), encodeTable = codec.encodeTable, decodeFields = codec.decodeFields, SCRATCH = Buffer.alloc(16384), EMPTY_OBJECT = Object.freeze({});
 
 module.exports.constants = {
   FRAME_METHOD: 1,
@@ -5672,10 +5673,78 @@ var propertiesInfoBasicProperties = module.exports.propertiesInfoBasicProperties
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* eslint-disable node/no-deprecated-api */
+var buffer = __webpack_require__(13)
+var Buffer = buffer.Buffer
+
+// alternative to using Object.keys for old browsers
+function copyProps (src, dst) {
+  for (var key in src) {
+    dst[key] = src[key]
+  }
+}
+if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow) {
+  module.exports = buffer
+} else {
+  // Copy properties from require('buffer')
+  copyProps(buffer, exports)
+  exports.Buffer = SafeBuffer
+}
+
+function SafeBuffer (arg, encodingOrOffset, length) {
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+// Copy static methods from Buffer
+copyProps(Buffer, SafeBuffer)
+
+SafeBuffer.from = function (arg, encodingOrOffset, length) {
+  if (typeof arg === 'number') {
+    throw new TypeError('Argument must not be a number')
+  }
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+SafeBuffer.alloc = function (size, fill, encoding) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  var buf = Buffer(size)
+  if (fill !== undefined) {
+    if (typeof encoding === 'string') {
+      buf.fill(fill, encoding)
+    } else {
+      buf.fill(fill)
+    }
+  } else {
+    buf.fill(0)
+  }
+  return buf
+}
+
+SafeBuffer.allocUnsafe = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return Buffer(size)
+}
+
+SafeBuffer.allocUnsafeSlow = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return buffer.SlowBuffer(size)
+}
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
-var assert = __webpack_require__(13);
+var assert = __webpack_require__(15);
 
 // JavaScript is numerically challenged
 var SHIFT_LEFT_32 = (1 << 16) * (1 << 16);
@@ -6148,7 +6217,7 @@ module.exports.writeInt64LE = writeInt64LE;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -6261,7 +6330,7 @@ function objectToString(o) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 try {
@@ -6269,21 +6338,15 @@ try {
   if (typeof util.inherits !== 'function') throw '';
   module.exports = util.inherits;
 } catch (e) {
-  module.exports = __webpack_require__(38);
+  module.exports = __webpack_require__(39);
 }
 
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = require("events");
 
 /***/ }),
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = require("stream");
+module.exports = require("events");
 
 /***/ }),
 /* 12 */
@@ -6319,10 +6382,22 @@ module.exports.stackCapture = stackCapture;
 /* 13 */
 /***/ (function(module, exports) {
 
-module.exports = require("assert");
+module.exports = require("buffer");
 
 /***/ }),
 /* 14 */
+/***/ (function(module, exports) {
+
+module.exports = require("stream");
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = require("assert");
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6331,8 +6406,8 @@ module.exports = require("assert");
 
 
 
-var ast = __webpack_require__(34);
-var parser = __webpack_require__(35);
+var ast = __webpack_require__(35);
+var parser = __webpack_require__(36);
 
 function parse_pattern(string) {
   var segments = parser.parse(string);
@@ -6361,7 +6436,7 @@ module.exports.parse = function() {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6371,7 +6446,7 @@ module.exports.parse = function() {
 
 
 
-var ints = __webpack_require__(7);
+var ints = __webpack_require__(8);
 
 // Interpret the pattern, writing values into a buffer
 function write(buf, offset, pattern, bindings) {
@@ -6493,7 +6568,7 @@ function write_float(buf, value, offset, size, bigendian) {
   return size;
 }
 
-var parse = __webpack_require__(14).parse;
+var parse = __webpack_require__(16).parse;
 
 module.exports.write = write;
 module.exports.build = build;
@@ -6510,13 +6585,7 @@ module.exports.builder = function(pstr) {
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = require("buffer");
-
-/***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6529,8 +6598,9 @@ module.exports = require("buffer");
 var defs = __webpack_require__(6);
 var constants = defs.constants;
 var decode = defs.decode;
+var Buffer = __webpack_require__(7).Buffer
 
-var Bits = __webpack_require__(33);
+var Bits = __webpack_require__(34);
 
 module.exports.PROTOCOL_HEADER = "AMQP" + String.fromCharCode(0, 0, 9, 1);
 
@@ -6627,7 +6697,7 @@ module.exports.decodeFrame = function(frame) {
 }
 
 // encoded heartbeat
-module.exports.HEARTBEAT_BUF = new Buffer([constants.FRAME_HEARTBEAT,
+module.exports.HEARTBEAT_BUF = Buffer.from([constants.FRAME_HEARTBEAT,
                                            0, 0, 0, 0, // size = 0
                                            0, 0, // channel = 0
                                            constants.FRAME_END]);
@@ -6636,7 +6706,7 @@ module.exports.HEARTBEAT = HEARTBEAT;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6675,7 +6745,7 @@ module.exports.HEARTBEAT = HEARTBEAT;
 
 
 
-var ints = __webpack_require__(7);
+var ints = __webpack_require__(8);
 
 var debug = (process.env.DEBUG) ?
   function(s) { console.log(s); } : function () {};
@@ -6877,7 +6947,7 @@ module.exports.parse_float = parse_float;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6885,14 +6955,14 @@ module.exports.parse_float = parse_float;
 
 
 
-__webpack_require__(7);
+__webpack_require__(8);
 var $ = __webpack_require__(1).format;
 
-var parse = __webpack_require__(14).parse;
-var interp = __webpack_require__(18),
+var parse = __webpack_require__(16).parse;
+var interp = __webpack_require__(19),
   parse_int = interp.parse_int,
   parse_float = interp.parse_float;
-var construct = __webpack_require__(15),
+var construct = __webpack_require__(17),
   write_int = construct.write_int,
   write_float = construct.write_float;
 
@@ -7185,7 +7255,7 @@ module.exports.compile_builder = function() {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -7209,7 +7279,7 @@ module.exports.compile_builder = function() {
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var Buffer = __webpack_require__(16).Buffer;
+var Buffer = __webpack_require__(13).Buffer;
 
 var isBufferEncoding = Buffer.isEncoding
   || function(encoding) {
@@ -7412,8 +7482,8 @@ function base64DetectIncompleteChar(buffer) {
 
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports) {
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
 
 //
 //
@@ -7425,26 +7495,29 @@ function base64DetectIncompleteChar(buffer) {
 //  * PLAIN (send username and password in the plain)
 //  * EXTERNAL (assume the server will figure out who you are from
 //    context, i.e., your SSL certificate)
+var Buffer = __webpack_require__(7).Buffer
 
 module.exports.plain = function(user, passwd) {
   return {
     mechanism: 'PLAIN',
     response: function() {
-      return new Buffer(['', user, passwd].join(String.fromCharCode(0)))
-    }
+      return Buffer.from(['', user, passwd].join(String.fromCharCode(0)))
+    },
+    username: user,
+    password: passwd
   }
 }
 
 module.exports.external = function() {
   return {
     mechanism: 'EXTERNAL',
-    response: function() { return new Buffer(''); }
+    response: function() { return Buffer.from(''); }
   }
 }
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7493,7 +7566,7 @@ return catchFilter;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7551,7 +7624,7 @@ module.exports = nodebackForPromise;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7567,13 +7640,13 @@ var defs = __webpack_require__(6);
 var closeMsg = __webpack_require__(4).closeMessage;
 var inspect = __webpack_require__(4).inspect;
 var methodName = __webpack_require__(4).methodName;
-var assert = __webpack_require__(13);
+var assert = __webpack_require__(15);
 var inherits = __webpack_require__(1).inherits;
-var EventEmitter = __webpack_require__(10).EventEmitter;
+var EventEmitter = __webpack_require__(11).EventEmitter;
 var fmt = __webpack_require__(1).format;
 var IllegalOperationError = __webpack_require__(12).IllegalOperationError;
 var stackCapture = __webpack_require__(12).stackCapture;
-
+var Buffer = __webpack_require__(7).Buffer
 function Channel(connection) {
   EventEmitter.call( this );
   this.connection = connection;
@@ -7843,7 +7916,7 @@ function acceptMessage(continuation) {
       
       // for zero-length messages, content frames aren't required.
       if (totalSize === 0) {
-        message.content = new Buffer(0);
+        message.content = Buffer.alloc(0);
         continuation(message);
         return acceptDeliveryOrReturn;
       }
@@ -8038,26 +8111,26 @@ BaseChannel.prototype.handleCancel = function(fields) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _rabbitConnexion = __webpack_require__(26);
+var _rabbitConnexion = __webpack_require__(27);
 
-var _rabbitUtils = __webpack_require__(83);
+var _rabbitUtils = __webpack_require__(84);
+
+var _logic = __webpack_require__(85);
 
 var connexionEstablished = (0, _rabbitConnexion.connexion)();
 
 (0, _rabbitUtils.assertQueue)(connexionEstablished, function ($message) {
-    var newMessage = Object.assign($message.message, { content: 'Je n\'ai malheuresement pas compris ton message' });
-    var newIntentMessage = Object.assign($message, { message: newMessage });
-    (0, _rabbitUtils.sendTo)(connexionEstablished, JSON.stringify(newIntentMessage));
+    (0, _rabbitUtils.sendTo)(connexionEstablished, JSON.stringify((0, _logic.logic)($message)));
 });
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8068,7 +8141,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.connexion = undefined;
 
-var _callback_api = __webpack_require__(27);
+var _callback_api = __webpack_require__(28);
 
 var _callback_api2 = _interopRequireDefault(_callback_api);
 
@@ -8087,11 +8160,11 @@ var connexion = exports.connexion = function connexion() {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var raw_connect = __webpack_require__(28).connect;
-var CallbackModel = __webpack_require__(50).CallbackModel;
+var raw_connect = __webpack_require__(29).connect;
+var CallbackModel = __webpack_require__(51).CallbackModel;
 
 // Supports three shapes:
 // connect(url, options, callback)
@@ -8110,11 +8183,12 @@ function connect(url, options, cb) {
 };
 
 module.exports.connect = connect;
-module.exports.credentials = __webpack_require__(21);
+module.exports.credentials = __webpack_require__(22);
+module.exports.IllegalOperationError = __webpack_require__(12).IllegalOperationError;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8126,11 +8200,11 @@ module.exports.credentials = __webpack_require__(21);
 
 
 
-var URL = __webpack_require__(29);
-var QS = __webpack_require__(30);
-var Connection = __webpack_require__(31).Connection;
+var URL = __webpack_require__(30);
+var QS = __webpack_require__(31);
+var Connection = __webpack_require__(32).Connection;
 var fmt = __webpack_require__(1).format;
-var credentials = __webpack_require__(21);
+var credentials = __webpack_require__(22);
 
 function copyInto(obj, target) {
   var keys = Object.keys(obj);
@@ -8149,7 +8223,7 @@ function clone(obj) {
 
 var CLIENT_PROPERTIES = {
   "product": "amqplib",
-  "version": __webpack_require__(47).version,
+  "version": __webpack_require__(48).version,
   "platform": fmt('Node.JS %s', process.version),
   "information": "http://squaremo.github.io/amqp.node",
   "capabilities": {
@@ -8196,13 +8270,22 @@ function openFrames(vhost, query, credentials, extraClientProperties) {
   };
 }
 
-// Decide on credentials based on what we're supplied
+// Decide on credentials based on what we're supplied. Note that in a
+// parsed URL, the auth part is already URL-decoded, so e.g., '%3a' in
+// the URL is already decoded to ':'. This is a bit unhelpful, as it
+// means we can't tell whether a colon is a separator, or part of the
+// username. Assume no colons in usernames.
 function credentialsFromUrl(parts) {
   var user = 'guest', passwd = 'guest';
   if (parts.auth) {
-    var auth = parts.auth.split(':');
-    user = auth[0];
-    passwd = auth[1];
+    var colon = parts.auth.indexOf(':')
+    if (colon == -1) {
+      user = parts.auth;
+      passwd = '';
+    } else {
+      user = parts.auth.substring(0, colon);
+      passwd = parts.auth.substring(colon+1);
+    }
   }
   return credentials.plain(user, passwd);
 }
@@ -8230,15 +8313,23 @@ function connect(url, socketOptions, openCallback) {
     sockopts.port = url.port || ((protocol === 'amqp:') ? 5672 : 5671);
 
     var user, pass;
-    if (!url.username) {
-      user = 'guest';
-      pass = url.password || 'guest';
+    // Only default if both are missing, to have the same behaviour as
+    // the stringly URL.
+    if (url.username == undefined && url.password == undefined) {
+      user = 'guest'; pass = 'guest';
     } else {
-      user = url.username;
-      pass = url.password;
+      user = url.username || '';
+      pass = url.password || '';
     }
 
-    fields = openFrames(url.vhost, null, sockopts.credentials || credentials.plain(user, pass), extraClientProperties);
+    var config = {
+      locale: url.locale,
+      channelMax: url.channelMax,
+      frameMax: url.frameMax,
+      heartbeat: url.heartbeat,
+    };
+
+    fields = openFrames(url.vhost, config, sockopts.credentials || credentials.plain(user, pass), extraClientProperties);
   } else {
     var parts = URL.parse(url, true); // yes, parse the query string
     protocol = parts.protocol;
@@ -8269,18 +8360,21 @@ function connect(url, socketOptions, openCallback) {
   }
 
   if (protocol === 'amqp:') {
-    sock = __webpack_require__(48).connect(sockopts, onConnect);
+    sock = __webpack_require__(49).connect(sockopts, onConnect);
   }
   else if (protocol === 'amqps:') {
-    sock = __webpack_require__(49).connect(sockopts, onConnect);
+    sock = __webpack_require__(50).connect(sockopts, onConnect);
   }
   else {
     throw new Error("Expected amqp: or amqps: as the protocol; got " + protocol);
   }
 
   if (timeout) {
-    sock.setTimeout(
-      timeout, openCallback.bind(this, new Error('connect ETIMEDOUT')));
+    sock.setTimeout(timeout, function() {
+      sock.end();
+      sock.destroy();
+      openCallback(new Error('connect ETIMEDOUT'));
+    });
   }
 
   sock.once('error', function(err) {
@@ -8290,22 +8384,23 @@ function connect(url, socketOptions, openCallback) {
 }
 
 module.exports.connect = connect;
+module.exports.credentialsFromUrl = credentialsFromUrl;
 
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-module.exports = require("url");
 
 /***/ }),
 /* 30 */
 /***/ (function(module, exports) {
 
-module.exports = require("querystring");
+module.exports = require("url");
 
 /***/ }),
 /* 31 */
+/***/ (function(module, exports) {
+
+module.exports = require("querystring");
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8317,25 +8412,26 @@ module.exports = require("querystring");
 
 var defs = __webpack_require__(6);
 var constants = defs.constants;
-var frame = __webpack_require__(17);
+var frame = __webpack_require__(18);
 var HEARTBEAT = frame.HEARTBEAT;
-var Mux = __webpack_require__(36).Mux;
+var Mux = __webpack_require__(37).Mux;
+var Buffer = __webpack_require__(7).Buffer
 
 var Duplex =
-  __webpack_require__(11).Duplex ||
-  __webpack_require__(37);
-var EventEmitter = __webpack_require__(10).EventEmitter;
-var Heart = __webpack_require__(42).Heart;
+  __webpack_require__(14).Duplex ||
+  __webpack_require__(38);
+var EventEmitter = __webpack_require__(11).EventEmitter;
+var Heart = __webpack_require__(43).Heart;
 
 var methodName = __webpack_require__(4).methodName;
 var closeMsg = __webpack_require__(4).closeMessage;
 var inspect = __webpack_require__(4).inspect;
 
-var BitSet = __webpack_require__(43).BitSet;
+var BitSet = __webpack_require__(44).BitSet;
 var inherits = __webpack_require__(1).inherits;
 var fmt = __webpack_require__(1).format;
-var PassThrough = __webpack_require__(11).PassThrough ||
-  __webpack_require__(44);
+var PassThrough = __webpack_require__(14).PassThrough ||
+  __webpack_require__(45);
 var IllegalOperationError = __webpack_require__(12).IllegalOperationError;
 var stackCapture = __webpack_require__(12).stackCapture;
 
@@ -8354,7 +8450,7 @@ function Connection(underlying) {
   this.muxer = new Mux(stream);
 
   // frames
-  this.rest = new Buffer(0);
+  this.rest = Buffer.alloc(0);
   this.frameMax = constants.FRAME_MIN_SIZE;
   this.sentSinceLastCheck = false;
   this.recvSinceLastCheck = false;
@@ -8861,7 +8957,7 @@ C.sendMessage = function(channel,
   var allLen = methodHeaderLen + bodyLen;
 
   if (allLen < SINGLE_CHUNK_THRESHOLD) {
-    var all = new Buffer(allLen);
+    var all = Buffer.alloc(allLen);
     var offset = mframe.copy(all, 0);
     offset += pframe.copy(all, offset);
 
@@ -8871,7 +8967,7 @@ C.sendMessage = function(channel,
   }
   else {
     if (methodHeaderLen < SINGLE_CHUNK_THRESHOLD) {
-      var both = new Buffer(methodHeaderLen);
+      var both = Buffer.alloc(methodHeaderLen);
       var offset = mframe.copy(both, 0);
       pframe.copy(both, offset);
       buffer.write(both);
@@ -8957,11 +9053,11 @@ module.exports.isFatalError = isFatalError;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// 
+//
 //
 //
 
@@ -9016,7 +9112,7 @@ properties are present. This scheme can save ones of bytes per message
 
 
 
-var ints = __webpack_require__(7);
+var ints = __webpack_require__(8);
 
 // JavaScript uses only doubles so what I'm testing for is whether
 // it's *better* to encode a number as a float or double. This really
@@ -9073,6 +9169,40 @@ function encodeFieldValue(buffer, value, offset) {
         type = value['!'];
     }
 
+    // If it's a JS number, we'll have to guess what type to encode it
+    // as.
+    if (type == 'number') {
+        // Making assumptions about the kind of number (floating point
+        // v integer, signed, unsigned, size) desired is dangerous in
+        // general; however, in practice RabbitMQ uses only
+        // longstrings and unsigned integers in its arguments, and
+        // other clients generally conflate number types anyway. So
+        // the only distinction we care about is floating point vs
+        // integers, preferring integers since those can be promoted
+        // if necessary. If floating point is required, we may as well
+        // use double precision.
+        if (isFloatingPoint(val)) {
+            type = 'double';
+        }
+        else { // only signed values are used in tables by
+               // RabbitMQ. It *used* to (< v3.3.0) treat the byte 'b'
+               // type as unsigned, but most clients (and the spec)
+               // think it's signed, and now RabbitMQ does too.
+            if (val < 128 && val >= -128) {
+                type = 'byte';
+            }
+            else if (val >= -0x8000 && val < 0x8000) {
+                type = 'short'
+            }
+            else if (val >= -0x80000000 && val < 0x80000000) {
+                type = 'int';
+            }
+            else {
+                type = 'long';
+            }
+        }
+    }
+
     function tag(t) { buffer.write(t, offset); offset++; }
 
     switch (type) {
@@ -9104,44 +9234,36 @@ function encodeFieldValue(buffer, value, offset) {
         tag('t');
         buffer.writeUInt8((val) ? 1 : 0, offset); offset++;
         break;
-    case 'number':
-        // Making assumptions about the kind of number (floating point
-        // v integer, signed, unsigned, size) desired is dangerous in
-        // general; however, in practice RabbitMQ uses only
-        // longstrings and unsigned integers in its arguments, and
-        // other clients generally conflate number types anyway. So
-        // the only distinction we care about is floating point vs
-        // integers, preferring integers since those can be promoted
-        // if necessary. If floating point is required, we may as well
-        // use double precision.
-        if (isFloatingPoint(val)) {
-            tag('d');
-            buffer.writeDoubleBE(val, offset);
-            offset += 8;
-        }
-        else { // only signed values are used in tables by
-               // RabbitMQ. It *used* to (< v3.3.0) treat the byte 'b'
-               // type as unsigned, but most clients (and the spec)
-               // think it's signed, and now RabbitMQ does too.
-            if (val < 128 && val >= -128) {
-                tag('b');
-                buffer.writeInt8(val, offset); offset++;
-            }
-            else if (val >= -0x8000 && val < 0x8000) { //  short
-                tag('s');
-                buffer.writeInt16BE(val, offset); offset += 2;
-            }
-            else if (val >= -0x80000000 && val < 0x80000000) { // int
-                tag('I');
-                buffer.writeInt32BE(val, offset); offset += 4;
-            }
-            else { // long
-                tag('l');
-                ints.writeInt64BE(buffer, val, offset); offset += 8;
-            }
-        }
+    // These are the types that are either guessed above, or
+    // explicitly given using the {'!': type} notation.
+    case 'double':
+    case 'float64':
+        tag('d');
+        buffer.writeDoubleBE(val, offset);
+        offset += 8;
         break;
-    // Now for exotic types, those can only be denoted by using
+    case 'byte':
+    case 'int8':
+        tag('b');
+        buffer.writeInt8(val, offset); offset++;
+        break;
+    case 'short':
+    case 'int16':
+        tag('s');
+        buffer.writeInt16BE(val, offset); offset += 2;
+        break;
+    case 'int':
+    case 'int32':
+        tag('I');
+        buffer.writeInt32BE(val, offset); offset += 4;
+        break;
+    case 'long':
+    case 'int64':
+        tag('l');
+        ints.writeInt64BE(buffer, val, offset); offset += 8;
+        break;
+
+    // Now for exotic types, those can _only_ be denoted by using
     // `{'!': type, value: val}
     case 'timestamp':
         tag('T');
@@ -9259,24 +9381,24 @@ module.exports.decodeFields = decodeFields;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports.parse = __webpack_require__(14).parse;
-module.exports.match = __webpack_require__(18).match;
-module.exports.build = __webpack_require__(15).build;
-module.exports.write = __webpack_require__(15).write;
+module.exports.parse = __webpack_require__(16).parse;
+module.exports.match = __webpack_require__(19).match;
+module.exports.build = __webpack_require__(17).build;
+module.exports.write = __webpack_require__(17).write;
 
 module.exports.matcher = module.exports.compile =
-  __webpack_require__(19).compile;
-module.exports.builder = __webpack_require__(19).compile_builder;
+  __webpack_require__(20).compile;
+module.exports.builder = __webpack_require__(20).compile_builder;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9399,7 +9521,7 @@ function size_of(segment, type, size, unit) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = (function(){
@@ -10578,7 +10700,7 @@ module.exports = (function(){
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10593,7 +10715,7 @@ module.exports = (function(){
 // downstream.
 
 var inherits = __webpack_require__(1).inherits;
-var assert = __webpack_require__(13);
+var assert = __webpack_require__(15);
 
 var schedule = (typeof setImmediate === 'function') ?
   setImmediate : process.nextTick;
@@ -10731,14 +10853,14 @@ module.exports.Mux = Mux;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(3)
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -10767,7 +10889,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -10794,17 +10916,17 @@ if (typeof Object.create === 'function') {
 module.exports = Readable;
 
 /*<replacement>*/
-var isArray = __webpack_require__(40);
+var isArray = __webpack_require__(41);
 /*</replacement>*/
 
 
 /*<replacement>*/
-var Buffer = __webpack_require__(16).Buffer;
+var Buffer = __webpack_require__(13).Buffer;
 /*</replacement>*/
 
 Readable.ReadableState = ReadableState;
 
-var EE = __webpack_require__(10).EventEmitter;
+var EE = __webpack_require__(11).EventEmitter;
 
 /*<replacement>*/
 if (!EE.listenerCount) EE.listenerCount = function(emitter, type) {
@@ -10812,11 +10934,11 @@ if (!EE.listenerCount) EE.listenerCount = function(emitter, type) {
 };
 /*</replacement>*/
 
-var Stream = __webpack_require__(11);
+var Stream = __webpack_require__(14);
 
 /*<replacement>*/
-var util = __webpack_require__(8);
-util.inherits = __webpack_require__(9);
+var util = __webpack_require__(9);
+util.inherits = __webpack_require__(10);
 /*</replacement>*/
 
 var StringDecoder;
@@ -10896,7 +11018,7 @@ function ReadableState(options, stream) {
   this.encoding = null;
   if (options.encoding) {
     if (!StringDecoder)
-      StringDecoder = __webpack_require__(20).StringDecoder;
+      StringDecoder = __webpack_require__(21).StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -11006,7 +11128,7 @@ function needMoreData(state) {
 // backwards compatibility.
 Readable.prototype.setEncoding = function(enc) {
   if (!StringDecoder)
-    StringDecoder = __webpack_require__(20).StringDecoder;
+    StringDecoder = __webpack_require__(21).StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -11724,7 +11846,7 @@ function indexOf (xs, x) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = Array.isArray || function (arr) {
@@ -11733,7 +11855,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -11764,18 +11886,18 @@ module.exports = Array.isArray || function (arr) {
 module.exports = Writable;
 
 /*<replacement>*/
-var Buffer = __webpack_require__(16).Buffer;
+var Buffer = __webpack_require__(13).Buffer;
 /*</replacement>*/
 
 Writable.WritableState = WritableState;
 
 
 /*<replacement>*/
-var util = __webpack_require__(8);
-util.inherits = __webpack_require__(9);
+var util = __webpack_require__(9);
+util.inherits = __webpack_require__(10);
 /*</replacement>*/
 
-var Stream = __webpack_require__(11);
+var Stream = __webpack_require__(14);
 
 util.inherits(Writable, Stream);
 
@@ -12216,7 +12338,7 @@ function endWritable(stream, state, cb) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12270,7 +12392,7 @@ function endWritable(stream, state, cb) {
 
 
 var inherits = __webpack_require__(1).inherits;
-var EventEmitter = __webpack_require__(10).EventEmitter;
+var EventEmitter = __webpack_require__(11).EventEmitter;
 
 // Exported so that we can mess with it in tests
 module.exports.UNITS_TO_MS = 1000;
@@ -12312,7 +12434,7 @@ Heart.prototype.runHeartbeat = function(check, fail) {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12422,14 +12544,14 @@ module.exports.BitSet = BitSet;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(45)
+module.exports = __webpack_require__(46)
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -12459,11 +12581,11 @@ module.exports = __webpack_require__(45)
 
 module.exports = PassThrough;
 
-var Transform = __webpack_require__(46);
+var Transform = __webpack_require__(47);
 
 /*<replacement>*/
-var util = __webpack_require__(8);
-util.inherits = __webpack_require__(9);
+var util = __webpack_require__(9);
+util.inherits = __webpack_require__(10);
 /*</replacement>*/
 
 util.inherits(PassThrough, Transform);
@@ -12481,7 +12603,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -12553,8 +12675,8 @@ module.exports = Transform;
 var Duplex = __webpack_require__(3);
 
 /*<replacement>*/
-var util = __webpack_require__(8);
-util.inherits = __webpack_require__(9);
+var util = __webpack_require__(9);
+util.inherits = __webpack_require__(10);
 /*</replacement>*/
 
 util.inherits(Transform, Duplex);
@@ -12696,25 +12818,25 @@ function done(stream, er) {
 
 
 /***/ }),
-/* 47 */
-/***/ (function(module, exports) {
-
-module.exports = {"name":"amqplib","homepage":"http://squaremo.github.io/amqp.node/","main":"./channel_api.js","version":"0.5.1","description":"An AMQP 0-9-1 (e.g., RabbitMQ) library and client.","repository":{"type":"git","url":"https://github.com/squaremo/amqp.node.git"},"engines":{"node":">=0.8 <6 || ^6"},"dependencies":{"bitsyntax":"~0.0.4","buffer-more-ints":"0.0.2","readable-stream":"1.x >=1.1.9","bluebird":"^3.4.6"},"devDependencies":{"mocha":"~1","claire":"0.4.1","uglify-js":"2.4.x","istanbul":"0.1.x"},"scripts":{"test":"make test","prepublish":"make"},"keywords":["AMQP","AMQP 0-9-1","RabbitMQ"],"author":"Michael Bridgen <mikeb@squaremobius.net>","license":"MIT"}
-
-/***/ }),
 /* 48 */
 /***/ (function(module, exports) {
 
-module.exports = require("net");
+module.exports = {"_from":"amqplib@^0.5.1","_id":"amqplib@0.5.2","_inBundle":false,"_integrity":"sha512-l9mCs6LbydtHqRniRwYkKdqxVa6XMz3Vw1fh+2gJaaVgTM6Jk3o8RccAKWKtlhT1US5sWrFh+KKxsVUALURSIA==","_location":"/amqplib","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"amqplib@^0.5.1","name":"amqplib","escapedName":"amqplib","rawSpec":"^0.5.1","saveSpec":null,"fetchSpec":"^0.5.1"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/amqplib/-/amqplib-0.5.2.tgz","_shasum":"d2d7313c7ffaa4d10bcf1e6252de4591b6cc7b63","_spec":"amqplib@^0.5.1","_where":"D:\\Bot\\bot-intent-cdi","author":{"name":"Michael Bridgen","email":"mikeb@squaremobius.net"},"bugs":{"url":"https://github.com/squaremo/amqp.node/issues"},"bundleDependencies":false,"dependencies":{"bitsyntax":"~0.0.4","bluebird":"^3.4.6","buffer-more-ints":"0.0.2","readable-stream":"1.x >=1.1.9","safe-buffer":"^5.0.1"},"deprecated":false,"description":"An AMQP 0-9-1 (e.g., RabbitMQ) library and client.","devDependencies":{"claire":"0.4.1","istanbul":"0.1.x","mocha":"~1","uglify-js":"2.4.x"},"engines":{"node":">=0.8 <=9"},"homepage":"http://squaremo.github.io/amqp.node/","keywords":["AMQP","AMQP 0-9-1","RabbitMQ"],"license":"MIT","main":"./channel_api.js","name":"amqplib","repository":{"type":"git","url":"git+https://github.com/squaremo/amqp.node.git"},"scripts":{"prepublish":"make","test":"make test"},"version":"0.5.2"}
 
 /***/ }),
 /* 49 */
 /***/ (function(module, exports) {
 
-module.exports = require("tls");
+module.exports = require("net");
 
 /***/ }),
 /* 50 */
+/***/ (function(module, exports) {
+
+module.exports = require("tls");
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12725,12 +12847,12 @@ module.exports = require("tls");
 
 
 var defs = __webpack_require__(6);
-var Promise = __webpack_require__(51);
+var Promise = __webpack_require__(52);
 var inherits = __webpack_require__(1).inherits;
-var EventEmitter = __webpack_require__(10).EventEmitter;
-var BaseChannel = __webpack_require__(24).BaseChannel;
-var acceptMessage = __webpack_require__(24).acceptMessage;
-var Args = __webpack_require__(82);
+var EventEmitter = __webpack_require__(11).EventEmitter;
+var BaseChannel = __webpack_require__(25).BaseChannel;
+var acceptMessage = __webpack_require__(25).acceptMessage;
+var Args = __webpack_require__(83);
 
 function CallbackModel(connection) {
   if (!(this instanceof CallbackModel))
@@ -13049,7 +13171,7 @@ ConfirmChannel.prototype.waitForConfirms = function(k) {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13061,13 +13183,13 @@ function noConflict() {
     catch (e) {}
     return bluebird;
 }
-var bluebird = __webpack_require__(52)();
+var bluebird = __webpack_require__(53)();
 bluebird.noConflict = noConflict;
 module.exports = bluebird;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13101,7 +13223,7 @@ if (util.isNode) {
 util.notEnumerableProp(Promise, "_getDomain", getDomain);
 
 var es5 = __webpack_require__(5);
-var Async = __webpack_require__(53);
+var Async = __webpack_require__(54);
 var async = new Async();
 es5.defineProperty(Promise, "_async", {value: async});
 var errors = __webpack_require__(2);
@@ -13115,19 +13237,19 @@ Promise.AggregateError = errors.AggregateError;
 var INTERNAL = function(){};
 var APPLY = {};
 var NEXT_FILTER = {};
-var tryConvertToPromise = __webpack_require__(56)(Promise, INTERNAL);
+var tryConvertToPromise = __webpack_require__(57)(Promise, INTERNAL);
 var PromiseArray =
-    __webpack_require__(57)(Promise, INTERNAL,
+    __webpack_require__(58)(Promise, INTERNAL,
                                tryConvertToPromise, apiRejection, Proxyable);
-var Context = __webpack_require__(58)(Promise);
+var Context = __webpack_require__(59)(Promise);
  /*jshint unused:false*/
 var createContext = Context.create;
-var debug = __webpack_require__(59)(Promise, Context);
+var debug = __webpack_require__(60)(Promise, Context);
 var CapturedTrace = debug.CapturedTrace;
 var PassThroughHandlerContext =
-    __webpack_require__(60)(Promise, tryConvertToPromise, NEXT_FILTER);
-var catchFilter = __webpack_require__(22)(NEXT_FILTER);
-var nodebackForPromise = __webpack_require__(23);
+    __webpack_require__(61)(Promise, tryConvertToPromise, NEXT_FILTER);
+var catchFilter = __webpack_require__(23)(NEXT_FILTER);
+var nodebackForPromise = __webpack_require__(24);
 var errorObj = util.errorObj;
 var tryCatch = util.tryCatch;
 function check(self, executor) {
@@ -13797,31 +13919,31 @@ util.notEnumerableProp(Promise,
                        "_makeSelfResolutionError",
                        makeSelfResolutionError);
 
-__webpack_require__(61)(Promise, INTERNAL, tryConvertToPromise, apiRejection,
+__webpack_require__(62)(Promise, INTERNAL, tryConvertToPromise, apiRejection,
     debug);
-__webpack_require__(62)(Promise, INTERNAL, tryConvertToPromise, debug);
-__webpack_require__(63)(Promise, PromiseArray, apiRejection, debug);
-__webpack_require__(64)(Promise);
+__webpack_require__(63)(Promise, INTERNAL, tryConvertToPromise, debug);
+__webpack_require__(64)(Promise, PromiseArray, apiRejection, debug);
 __webpack_require__(65)(Promise);
-__webpack_require__(66)(
+__webpack_require__(66)(Promise);
+__webpack_require__(67)(
     Promise, PromiseArray, tryConvertToPromise, INTERNAL, async, getDomain);
 Promise.Promise = Promise;
-Promise.version = "3.5.0";
-__webpack_require__(67)(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
-__webpack_require__(68)(Promise);
-__webpack_require__(69)(Promise, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug);
-__webpack_require__(70)(Promise, INTERNAL, debug);
-__webpack_require__(71)(Promise, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug);
-__webpack_require__(72)(Promise);
-__webpack_require__(73)(Promise, INTERNAL);
-__webpack_require__(74)(Promise, PromiseArray, tryConvertToPromise, apiRejection);
-__webpack_require__(75)(Promise, INTERNAL, tryConvertToPromise, apiRejection);
-__webpack_require__(76)(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
-__webpack_require__(77)(Promise, PromiseArray, debug);
-__webpack_require__(78)(Promise, PromiseArray, apiRejection);
-__webpack_require__(79)(Promise, INTERNAL);
+Promise.version = "3.5.1";
+__webpack_require__(68)(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
+__webpack_require__(69)(Promise);
+__webpack_require__(70)(Promise, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug);
+__webpack_require__(71)(Promise, INTERNAL, debug);
+__webpack_require__(72)(Promise, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug);
+__webpack_require__(73)(Promise);
+__webpack_require__(74)(Promise, INTERNAL);
+__webpack_require__(75)(Promise, PromiseArray, tryConvertToPromise, apiRejection);
+__webpack_require__(76)(Promise, INTERNAL, tryConvertToPromise, apiRejection);
+__webpack_require__(77)(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
+__webpack_require__(78)(Promise, PromiseArray, debug);
+__webpack_require__(79)(Promise, PromiseArray, apiRejection);
 __webpack_require__(80)(Promise, INTERNAL);
-__webpack_require__(81)(Promise);
+__webpack_require__(81)(Promise, INTERNAL);
+__webpack_require__(82)(Promise);
                                                          
     util.toFastProperties(Promise);                                          
     util.toFastProperties(Promise.prototype);                                
@@ -13849,15 +13971,15 @@ __webpack_require__(81)(Promise);
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var firstLineError;
 try {throw new Error(); } catch (e) {firstLineError = e;}
-var schedule = __webpack_require__(54);
-var Queue = __webpack_require__(55);
+var schedule = __webpack_require__(55);
+var Queue = __webpack_require__(56);
 var util = __webpack_require__(0);
 
 function Async() {
@@ -14017,7 +14139,7 @@ module.exports.firstLineError = firstLineError;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14085,7 +14207,7 @@ module.exports = schedule;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14165,7 +14287,7 @@ module.exports = Queue;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14258,7 +14380,7 @@ return tryConvertToPromise;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14450,7 +14572,7 @@ return PromiseArray;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14526,7 +14648,7 @@ return Context;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14570,7 +14692,10 @@ Promise.prototype.suppressUnhandledRejections = function() {
 Promise.prototype._ensurePossibleRejectionHandled = function () {
     if ((this._bitField & 524288) !== 0) return;
     this._setRejectionIsUnhandled();
-    async.invokeLater(this._notifyUnhandledRejection, this, undefined);
+    var self = this;
+    setTimeout(function() {
+        self._notifyUnhandledRejection();
+    }, 1);
 };
 
 Promise.prototype._notifyUnhandledRejectionIsHandled = function () {
@@ -15449,7 +15574,7 @@ return {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15458,7 +15583,7 @@ module.exports = function(Promise, tryConvertToPromise, NEXT_FILTER) {
 var util = __webpack_require__(0);
 var CancellationError = Promise.CancellationError;
 var errorObj = util.errorObj;
-var catchFilter = __webpack_require__(22)(NEXT_FILTER);
+var catchFilter = __webpack_require__(23)(NEXT_FILTER);
 
 function PassThroughHandlerContext(promise, type, handler) {
     this.promise = promise;
@@ -15602,7 +15727,7 @@ return PassThroughHandlerContext;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15664,7 +15789,7 @@ Promise.prototype._resolveFromSyncValue = function (value) {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15738,7 +15863,7 @@ Promise.bind = function (thisArg, value) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15874,7 +15999,7 @@ Promise.prototype._resultCancelled = function() {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15927,7 +16052,7 @@ Promise.prototype.catchReturn = function (value) {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16037,7 +16162,7 @@ Promise.PromiseInspection = PromiseInspection;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16212,7 +16337,7 @@ Promise.join = function () {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16387,7 +16512,7 @@ Promise.map = function (promises, fn, options, _filter) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16517,7 +16642,7 @@ Promise.prototype.get = function (propertyName) {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16750,7 +16875,7 @@ module.exports = function (Promise, apiRejection, tryConvertToPromise,
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16850,7 +16975,7 @@ Promise.prototype.timeout = function (ms, message) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17080,7 +17205,7 @@ Promise.spawn = function (generatorFunction) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17145,7 +17270,7 @@ Promise.prototype.asCallback = Promise.prototype.nodeify = function (nodeback,
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17153,7 +17278,7 @@ Promise.prototype.asCallback = Promise.prototype.nodeify = function (nodeback,
 module.exports = function(Promise, INTERNAL) {
 var THIS = {};
 var util = __webpack_require__(0);
-var nodebackForPromise = __webpack_require__(23);
+var nodebackForPromise = __webpack_require__(24);
 var withAppended = util.withAppended;
 var maybeWrapAsError = util.maybeWrapAsError;
 var canEvaluate = util.canEvaluate;
@@ -17466,7 +17591,7 @@ Promise.promisifyAll = function (target, options) {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17591,7 +17716,7 @@ Promise.props = function (promises) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17647,7 +17772,7 @@ Promise.prototype.race = function () {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17826,7 +17951,7 @@ function gotValue(value) {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17876,7 +18001,7 @@ Promise.prototype.settle = function () {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18031,7 +18156,7 @@ Promise._SomePromiseArray = SomePromiseArray;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18050,7 +18175,7 @@ Promise.filter = function (promises, fn, options) {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18087,7 +18212,7 @@ Promise.mapSeries = PromiseMapSeries;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18115,7 +18240,7 @@ Promise.prototype.any = function () {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18434,7 +18559,7 @@ module.exports = Object.freeze(Args);
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18458,7 +18583,7 @@ var assertQueue = exports.assertQueue = function assertQueue(connexion, callback
     connexion.then(function (conn) {
         conn.createChannel(function (err, ch) {
             ch.assertExchange(env.exchange, 'topic', { durable: true });
-            ch.assertQueue(env.queue, { durable: false }, function (err, q) {
+            ch.assertQueue(env.queue, { durable: true }, function (err, q) {
                 console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
                 ch.bindQueue(q.queue, env.exchange, env.binding);
@@ -18481,6 +18606,42 @@ var sendTo = exports.sendTo = function sendTo(connexion, message) {
         });
     });
 };
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.logic = undefined;
+
+var _cdi = __webpack_require__(86);
+
+var logic = exports.logic = function logic($message) {
+    console.log($message);
+    return new Promise(function (resolve, reject) {
+        var response = _cdi.cdi[Math.floor(Math.random() * _cdi.cdi.length)];
+        var newMessage = Object.assign($message, { content: response });
+        var newIntentMessage = Object.assign($message, { content: newMessage });
+        resolve(newIntentMessage);
+    });
+};
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var cdi = exports.cdi = ["Pour toute recherche de CDI, n'attendez-plus et rendez-vous sur https://candidat.pole-emploi.fr/offres/recherche?offresPartenaires=true&rayon=10&tri=0&typeContrat=CDI", "Pour trouver un CDI qui vous correspond, renseignez vos critères directement sur https://candidat.pole-emploi.fr/offres/recherche?offresPartenaires=true&rayon=10&tri=0&typeContrat=CDI0", "A la recherche d'un CDI ? Faites-donc un tour sur https://candidat.pole-emploi.fr/offres/recherche?offresPartenaires=true&rayon=10&tri=0&typeContrat=CDI et trouvez des offres en quelques clics"];
 
 /***/ })
 /******/ ]);
