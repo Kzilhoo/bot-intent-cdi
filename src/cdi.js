@@ -1,5 +1,5 @@
 export const cdi = [
-    "Pour toute recherche de CDI, n'attendez-plus et rendez-vous sur ",
-    "Pour trouver un CDI qui vous correspond, renseignez vos critères directement sur",
-    "A la recherche d'un CDI ? Faites-donc un tour sur ",
+    "Nous avons trouvé ces offres qui pourraient correspondre à des offres en CDI : ",
+    "Nous avons sélectionné une liste d'offres qui semblent correspondre à vos attentes : ",
+    "Ces offres sont susceptibles de correspondre à votre recherche :  ",
 ]
