@@ -1,6 +1,6 @@
-var elasticsearch=require('elasticsearch');
+var elasticsearch = require('elasticsearch');
 
-var client = new elasticsearch.Client( {  
+var client = new elasticsearch.Client({
   hosts: [
     'https://es.hurrycane.fr:443',
   ]
