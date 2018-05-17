@@ -20,7 +20,7 @@
         }
     },
     "dependencies": {
-        "amqplib": "^0.5.1",
+        "amqplib": "^0.5.2",
         "ava": "^0.22.0",
         "babel-cli": "^6.24.1",
         "babel-core": "^6.25.0",
@@ -32,6 +32,9 @@
         "nyc": "^11.2.1",
         "proxyquire": "^1.8.0",
         "rabbitmock": "^0.5.0",
-        "webpack": "^3.7.1"
+        "webpack": "^4.8.3"
+    },
+    "devDependencies": {
+        "webpack-cli": "^2.1.3"
     }
 }
