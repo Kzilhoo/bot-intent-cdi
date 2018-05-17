@@ -7,17 +7,18 @@ export function search(index,type, typeOffer,domain){
       "query": {
         "bool": {
           "should": {
-            "match": { typeOffer:typeOffer},
-            "match": { domain:domain}
+            "match": { typeOffer},
+            "match": { domain}
           }
         }
       }
     }
   }).then(function(resp){
-      var hits = resp.hits.hits;
-  }, function(err){
-      console.trace(err.message);
+      return resp.hits.hits;
+    }, function(err){
+  console.trace(err.message);
   });
+    console.log("--- Response ---");
         console.log("--- Response ---");
 }
        
