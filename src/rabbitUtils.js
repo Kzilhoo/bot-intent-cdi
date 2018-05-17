@@ -14,10 +14,12 @@ export const assertQueue = (connexion, callback) => {
         conn.createChannel(function (err, ch) {
             ch.assertExchange(env.exchange, 'topic', { durable: true })
             ch.assertQueue(env.queue, { durable: true }, function (err, q) {
-                console.log(' [*] Waiting for logs. To exit press CTRL+C')
+
 
                 ch.bindQueue(q.queue, env.exchange, env.binding)
+                console.log(' [*] Waiting for logs. To exit press CTRL+C',q.queue, env.exchange, env.binding)
                 ch.consume(q.queue, function (msg) {
+                    console.log(' [*] Response. To exit press CTRL+C')
                     callback(JSON.parse(msg.content.toString()))
                 }, { noAck: true })
             })

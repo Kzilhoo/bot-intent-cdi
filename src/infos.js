@@ -1,26 +1,23 @@
-var client = require('./esConnexion.js');
-
-
-export function search(index,type, title){
+export function search(index,type, typeOffer,domain){
+  var client = require('./esConnexion.js');
   return client.search({  
     index: index,
     type: type,
     body: {
-      query: {
-        match: { title:title }
-      },
+      "query": {
+        "bool": {
+          "should": {
+            "match": { typeOffer:typeOffer},
+            "match": { domain:domain}
+          }
+        }
+      }
     }
-  },function (error, response,status) {
-      if (error){
-        console.log("search error: "+error)
-      }
-      else {
-        console.log("--- Response ---");
-        console.log(response);
-        console.log("--- Hits ---");
-        response.hits.hits.forEach(function(hit){
-          console.log(hit);
-        })
-      }
+  }).then(function(resp){
+      var hits = resp.hits.hits;
+  }, function(err){
+      console.trace(err.message);
   });
+        console.log("--- Response ---");
 }
+       
